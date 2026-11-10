@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026학년도 1학년 창의연구 성과 공유회 - 컨설팅 안내 시스템</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              800: '#115e59',
+              900: '#134e4a'
+            }
+          },
+          animation: {
+            'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'ping-slow': 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- SheetJS (xlsx parser) for real-time excel & csv import -->
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  
+  <!-- Initial Data File -->
+  <script src="app_data.js"></script>
+
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .booth-rect {
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+    }
+    .booth-rect:hover {
+      filter: brightness(0.92);
+      transform: scale(1.02);
+      transform-origin: center;
+    }
+    .booth-highlight {
+      stroke: #dc2626 !important;
+      stroke-width: 4px !important;
+      filter: drop-shadow(0 0 10px rgba(220, 38, 38, 0.7));
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-teal-500 selection:text-white">
+
+  <!-- ================= TOP HEADER ================= -->
+  <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-lg sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-indigo-500 flex items-center justify-center shadow-md font-black text-xl text-white tracking-wider">
+          RnE
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30">
+              창원과학고등학교
+            </span>
+            <span class="text-xs text-slate-300 hidden sm:inline">2026.11.12.(목) 09:30~12:30</span>
+          </div>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            1학년 창의연구 성과 공유회
+            <span class="text-xs sm:text-sm font-normal text-teal-300">| 컨설팅 안내 시스템</span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2">
+        <button id="btn-open-sync" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-medium text-slate-100 transition-colors border border-white/10 shadow-sm" title="구글 스프레드시트 / 엑셀 데이터 동기화">
+          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          <span class="hidden sm:inline">연구주제 동기화</span>
+          <span class="sm:hidden">시트</span>
+        </button>
+        <button id="btn-view-map-photo" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-xs font-medium text-white transition-colors shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+          </svg>
+          <span>도면 원본</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-slate-900/80 border-t border-slate-800 backdrop-blur">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 sm:space-x-3 overflow-x-auto custom-scrollbar">
+        <button class="nav-tab active px-3.5 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-teal-400 text-teal-300 flex items-center gap-2 whitespace-nowrap" data-tab="teacher-view">
+          <span>👨‍🏫 교사/위원별 시간표 & 위치</span>
+        </button>
+        <button class="nav-tab px-3.5 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-300 hover:text-white flex items-center gap-2 whitespace-nowrap" data-tab="map-view">
+          <span>🗺️ 행사장 부스 배치도</span>
+        </button>
+        <button class="nav-tab px-3.5 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-300 hover:text-white flex items-center gap-2 whitespace-nowrap" data-tab="teams-view">
+          <span>📋 조별 타임테이블 & 연구주제</span>
+        </button>
+        <button class="nav-tab px-3.5 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-300 hover:text-white flex items-center gap-2 whitespace-nowrap" data-tab="matrix-view">
+          <span>⏰ 종합 타임테이블 현황판</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= NOTIFICATION BANNER ================= -->
+  <div id="sync-status-bar" class="bg-teal-50 border-b border-teal-200 text-teal-800 text-xs px-4 py-2 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto w-full flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+        <span id="sync-info-text">연구주제 데이터: <strong>연구주제목록.xlsx</strong> 기본 데이터 적용 중 (총 28개 조)</span>
+      </div>
+      <button id="btn-quick-sync" class="text-teal-700 underline hover:text-teal-900 font-medium ml-2">스프레드시트 갱신</button>
+    </div>
+  </div>
+
+  <!-- ================= MAIN CONTENT CONTAINER ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+    <!-- TAB 1: TEACHER / COMMISSIONER VIEW (MAIN) -->
+    <section id="tab-teacher-view" class="tab-content block">
+      
+      <!-- Top Filter Card -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 mb-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+              컨설팅 위원 / 교사 선택
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">선택하신 위원의 개인별 회차별 이동 시간표와 부스 위치를 바로 확인합니다.</p>
+          </div>
+
+          <!-- Quick Department Filter Buttons -->
+          <div class="flex flex-wrap items-center gap-1.5" id="dept-filter-buttons">
+            <button class="dept-btn active px-2.5 py-1 rounded-md text-xs font-semibold bg-indigo-600 text-white" data-dept="ALL">전체 (25명)</button>
+            <button class="dept-btn px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700" data-dept="외부">외부위원 (6명)</button>
+            <button class="dept-btn px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200" data-dept="수학">수학 (9명)</button>
+            <button class="dept-btn px-2.5 py-1 rounded-md text-xs font-semibold bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200" data-dept="물리">물리 (4명)</button>
+            <button class="dept-btn px-2.5 py-1 rounded-md text-xs font-semibold bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200" data-dept="화학">화학 (4명)</button>
+            <button class="dept-btn px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200" data-dept="생명과학">생명 (4명)</button>
+            <button class="dept-btn px-2.5 py-1 rounded-md text-xs font-semibold bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200" data-dept="융합">융합 (4명)</button>
+          </div>
+        </div>
+
+        <!-- Teacher Select & Search Box -->
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-12 gap-3">
+          <div class="sm:col-span-6 md:col-span-5">
+            <label class="block text-xs font-medium text-slate-600 mb-1">위원 성명 선택</label>
+            <select id="select-teacher" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all shadow-sm">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+          <div class="sm:col-span-6 md:col-span-7 flex items-end">
+            <div class="w-full flex items-center gap-2">
+              <div class="relative flex-1">
+                <input type="text" id="input-search" placeholder="교사 이름, 학생 이름, 연구주제 키워드 검색..." class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all shadow-sm">
+                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
+              <button id="btn-print-schedule" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-300 flex items-center gap-1.5 shadow-sm whitespace-nowrap" title="선택된 시간표 인쇄">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                </svg>
+                <span class="hidden md:inline">시간표 인쇄</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Two Column Layout (Left: Schedule Cards, Right: Interactive Map) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left: Teacher Info & Schedule Cards (7 cols) -->
+        <div class="lg:col-span-7 space-y-4">
+          
+          <!-- Teacher Profile Card -->
+          <div id="teacher-profile-card" class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+            <!-- Dynamic Content -->
+          </div>
+
+          <!-- Schedule Timeline Header -->
+          <div class="flex items-center justify-between px-1">
+            <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+              <span>📅 회차별 컨설팅 진행 순서 (총 8회차)</span>
+            </h3>
+            <span class="text-xs text-slate-500">회차 카드를 누르면 부스 위치가 강조됩니다</span>
+          </div>
+
+          <!-- Cards List -->
+          <div id="schedule-cards-list" class="space-y-3">
+            <!-- Dynamic Content -->
+          </div>
+        </div>
+
+        <!-- Right: Interactive Booth Map Sidecar (5 cols) -->
+        <div class="lg:col-span-5 sticky top-24 space-y-3">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-teal-500"></span>
+                <h3 class="text-sm font-bold text-slate-900">행사장 부스 위치 안내 (체육관)</h3>
+              </div>
+              <span id="active-booth-badge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                선택된 조: 없음
+              </span>
+            </div>
+            
+            <p class="text-xs text-slate-500 mb-3">
+              도면의 부스를 클릭하거나 왼쪽 회차를 누르면 해당 위치가 <strong class="text-red-600">빨간색 테두리</strong>로 반짝입니다.
+            </p>
+
+            <!-- Interactive SVG Map Container -->
+            <div class="relative bg-slate-50 rounded-xl border border-slate-200 p-2 overflow-hidden flex justify-center items-center">
+              <div id="interactive-map-container" class="w-full max-w-md">
+                <!-- SVG will be injected by JavaScript -->
+              </div>
+            </div>
+
+            <!-- Map Legend -->
+            <div class="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-1 text-[11px] text-slate-600">
+              <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-amber-200 border border-amber-500"></span> 수학 (1~9)</div>
+              <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-purple-200 border border-purple-500"></span> 물리 (10~15)</div>
+              <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-teal-200 border border-teal-500"></span> 화학 (16~21)</div>
+              <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-emerald-200 border border-emerald-500"></span> 생명 (22~25)</div>
+              <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-orange-200 border border-orange-500"></span> 융합 (26~28)</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 2: FULL MAP VIEW -->
+    <section id="tab-map-view" class="tab-content hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-teal-500"></span>
+              체육관 행사장 전체 배치도
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">
+              각 부스(조 번호)를 클릭하면 해당 조의 연구 주제, 학생, 지도교사 및 1~8회차 방문 위원 명단을 확인할 수 있습니다.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="btn-toggle-original-map px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 border border-slate-300">
+              📷 업로드 도면 사진 보기
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div class="lg:col-span-8 flex justify-center bg-slate-50 rounded-2xl border border-slate-200 p-4">
+            <div id="full-interactive-map-container" class="w-full max-w-xl">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+
+          <div class="lg:col-span-4 bg-slate-50 rounded-2xl border border-slate-200 p-5">
+            <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+              선택된 부스 정보
+            </h3>
+            <div id="selected-booth-detail" class="space-y-4">
+              <div class="text-center py-12 text-slate-400 text-xs">
+                왼쪽 도면에서 부스를 클릭하세요.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: TEAMS & TOPICS LIST -->
+    <section id="tab-teams-view" class="tab-content hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-indigo-600"></span>
+              조별 타임테이블 & 연구주제 목록 (1~28조)
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">
+              연구주제는 <strong>연구주제목록.xlsx</strong> 및 동기화된 스프레드시트의 최신 내용입니다.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="input-search-teams" placeholder="조 번호, 주제, 학생, 지도교사 검색..." class="bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-64 shadow-sm">
+          </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="overflow-x-auto rounded-xl border border-slate-200">
+          <table class="w-full text-left text-xs sm:text-sm border-collapse">
+            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3 w-14 text-center">조</th>
+                <th class="p-3 w-20">분야</th>
+                <th class="p-3 min-w-[280px]">연구 주제</th>
+                <th class="p-3 w-24">지도교사</th>
+                <th class="p-3 w-36">발표 학생</th>
+                <th class="p-3 min-w-[320px]">회차별 컨설팅 위원 (1~8회차)</th>
+              </tr>
+            </thead>
+            <tbody id="teams-table-body" class="divide-y divide-slate-200 bg-white">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: MATRIX VIEW (ALL PERIODS) -->
+    <section id="tab-matrix-view" class="tab-content hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-purple-600"></span>
+              종합 타임테이블 현황판
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">
+              회차를 선택하면 해당 시각에 각 조 부스에서 진행 중인 컨설팅 위원 배치를 한눈에 볼 수 있습니다.
+            </p>
+          </div>
+
+          <!-- Period Buttons -->
+          <div class="flex flex-wrap gap-1" id="matrix-period-tabs">
+            <!-- Dynamic period buttons -->
+          </div>
+        </div>
+
+        <div id="matrix-period-content" class="space-y-4">
+          <!-- Dynamic Content -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= MODAL: ORIGINAL MAP PHOTO ================= -->
+  <div id="modal-map-photo" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <span>📷 행사장 부스 배치도 원본 도면</span>
+        </h3>
+        <button id="btn-close-map-photo" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="p-4 overflow-auto flex-1 flex justify-center bg-slate-100">
+        <img src="venue_map.png" alt="행사장 배치도" class="max-w-full h-auto rounded-lg shadow-md border border-slate-300">
+      </div>
+      <div class="p-3 bg-slate-50 border-t border-slate-200 text-right">
+        <button class="btn-close-modal px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: SPREADSHEET / EXCEL SYNC ================= -->
+  <div id="modal-sync" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+      <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-gradient-to-r from-teal-600 to-indigo-700 text-white">
+        <div>
+          <h3 class="text-base font-bold flex items-center gap-2">
+            <span>🔄 연구주제 데이터 관리 및 실시간 동기화</span>
+          </h3>
+          <p class="text-xs text-teal-100 mt-0.5">연구주제나 학생 이름이 변경되면 여기서 바로 업데이트할 수 있습니다.</p>
+        </div>
+        <button id="btn-close-sync" class="text-white/80 hover:text-white p-1 rounded-lg">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-6">
+        
+        <!-- Method 1: Google Sheets URL Sync -->
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-6 h-6 rounded-md bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">1</span>
+            <h4 class="text-sm font-bold text-slate-900">구글 스프레드시트 실시간 연동 (웹에 게시 링크)</h4>
+          </div>
+          <p class="text-xs text-slate-500 mb-3">
+            구글 시트의 [파일] → [공유] → [웹에 게시]에서 <strong>CSV 형식</strong> 링크를 입력하면 실시간으로 최신 주제를 불러옵니다.
+          </p>
+          <div class="space-y-2">
+            <input type="url" id="input-sheets-url" placeholder="https://docs.google.com/spreadsheets/d/.../export?format=csv 또는 pub?output=csv" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <div class="flex gap-2">
+              <button id="btn-fetch-sheets" class="flex-1 px-3 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span>구글 시트에서 최신 데이터 가져오기</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Method 2: Excel / CSV File Upload -->
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="w-6 h-6 rounded-md bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">2</span>
+            <h4 class="text-sm font-bold text-slate-900">엑셀 파일(.xlsx, .csv) 직접 업로드 교체</h4>
+          </div>
+          <p class="text-xs text-slate-500 mb-3">
+            새로 변경된 <code class="text-indigo-600 bg-indigo-50 px-1 py-0.5 rounded">연구주제목록.xlsx</code> 파일을 선택하면 화면에 즉시 적용됩니다.
+          </p>
+          <input type="file" id="input-excel-file" accept=".xlsx, .xls, .csv" class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+        </div>
+
+        <!-- Reset Button -->
+        <div class="pt-2 border-t border-slate-200 flex items-center justify-between">
+          <span class="text-xs text-slate-500">초기화가 필요하신가요?</span>
+          <button id="btn-reset-default" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 border border-slate-300 transition-colors">
+            초기 기본 데이터로 되돌리기
+          </button>
+        </div>
+
+      </div>
+
+      <div class="p-3 bg-slate-50 border-t border-slate-200 text-right">
+        <button class="btn-close-modal px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: BOOTH DETAIL ================= -->
+  <div id="modal-booth-detail" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full overflow-hidden flex flex-col shadow-2xl">
+      <div id="modal-booth-header" class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <!-- Dynamic header -->
+      </div>
+      <div id="modal-booth-body" class="p-5 overflow-y-auto space-y-4">
+        <!-- Dynamic body -->
+      </div>
+      <div class="p-3 bg-slate-50 border-t border-slate-200 text-right">
+        <button class="btn-close-modal px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-white border-t border-slate-200 mt-auto py-4 text-center text-xs text-slate-500">
+    <p>2026학년도 창원과학고등학교 1학년 창의연구 성과 공유회 · 체육관 행사장 컨설팅 안내</p>
+    <p class="mt-1 text-[11px] text-slate-400">자료 출처: 2026 교사 컨설팅 타임테이블(README.md) & 연구주제목록.xlsx</p>
+  </footer>
+
+  <!-- ================= JAVASCRIPT APPLICATION LOGIC ================= -->
+  <script>
+    // App State
+    let currentData = null;
+    let selectedTeacherName = null;
+    let selectedBoothNumber = null;
+    let currentFilterDept = 'ALL';
+
+    // Department Colors & Badges
+    const DEPT_STYLES = {
+      '수학': { badge: 'bg-amber-100 text-amber-800 border-amber-300', fill: '#fef08a', stroke: '#d97706', label: '수학' },
+      '물리': { badge: 'bg-purple-100 text-purple-800 border-purple-300', fill: '#ddd6fe', stroke: '#7c3aed', label: '물리' },
+      '화학': { badge: 'bg-teal-100 text-teal-800 border-teal-300', fill: '#a7f3d0', stroke: '#0d9488', label: '화학' },
+      '생명과학': { badge: 'bg-emerald-100 text-emerald-800 border-emerald-300', fill: '#bbf7d0', stroke: '#16a34a', label: '생명' },
+      '생명': { badge: 'bg-emerald-100 text-emerald-800 border-emerald-300', fill: '#bbf7d0', stroke: '#16a34a', label: '생명' },
+      '융합': { badge: 'bg-orange-100 text-orange-800 border-orange-300', fill: '#fed7aa', stroke: '#ea580c', label: '융합' },
+      '기타': { badge: 'bg-slate-100 text-slate-800 border-slate-300', fill: '#e2e8f0', stroke: '#64748b', label: '기타' }
+    };
+
+    // Initialize Application
+    document.addEventListener('DOMContentLoaded', () => {
+      loadInitialData();
+      initUIEvents();
+      renderTeacherSelect();
+      renderInteractiveMap('interactive-map-container', true);
+      renderInteractiveMap('full-interactive-map-container', false);
+      renderTeamsTable();
+      renderMatrixView(1);
+
+      // Default select first teacher (이은경 교수님)
+      const firstTeacher = Object.keys(currentData.teachers)[0];
+      if (firstTeacher) {
+        selectTeacher(firstTeacher);
+      }
+    });
+
+    // 1. Data Loading & LocalStorage Persistence
+    function loadInitialData() {
+      const savedTopics = localStorage.getItem('RnE_custom_topics');
+      currentData = JSON.parse(JSON.stringify(INITIAL_DATA));
+
+      if (savedTopics) {
+        try {
+          const parsed = JSON.parse(savedTopics);
+          currentData.topics = parsed;
+          document.getElementById('sync-info-text').innerHTML = '연구주제 데이터: <strong>사용자 동기화 데이터 적용 중</strong> (총 ' + Object.keys(parsed).length + '개 조)';
+        } catch (e) {
+          console.error('Error parsing stored topics', e);
+        }
+      }
+
+      // Load saved Google Sheet URL if exists
+      const savedUrl = localStorage.getItem('RnE_sheets_url');
+      if (savedUrl) {
+        document.getElementById('input-sheets-url').value = savedUrl;
+      }
+    }
+
+    // 2. UI Event Handlers
+    function initUIEvents() {
+      // Tab Navigation
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.nav-tab').forEach(t => {
+            t.classList.remove('active', 'border-teal-400', 'text-teal-300');
+            t.classList.add('border-transparent', 'text-slate-300');
+          });
+          tab.classList.add('active', 'border-teal-400', 'text-teal-300');
+          tab.classList.remove('border-transparent', 'text-slate-300');
+
+          const target = tab.getAttribute('data-tab');
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+          document.getElementById('tab-' + target).classList.remove('hidden');
+
+          if (target === 'map-view') {
+            renderInteractiveMap('full-interactive-map-container', false);
+          }
+        });
+      });
+
+      // Teacher Selection Change
+      const selectTeacherEl = document.getElementById('select-teacher');
+      selectTeacherEl.addEventListener('change', (e) => {
+        selectTeacher(e.target.value);
+      });
+
+      // Department Filter Buttons
+      document.querySelectorAll('.dept-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.dept-btn').forEach(b => {
+            b.classList.remove('bg-indigo-600', 'text-white');
+            b.classList.add('bg-slate-100', 'text-slate-700');
+          });
+          btn.classList.add('bg-indigo-600', 'text-white');
+          btn.classList.remove('bg-slate-100', 'text-slate-700');
+
+          currentFilterDept = btn.getAttribute('data-dept');
+          renderTeacherSelect();
+        });
+      });
+
+      // Search Inputs
+      document.getElementById('input-search').addEventListener('input', (e) => {
+        filterTeachersByQuery(e.target.value.trim());
+      });
+      document.getElementById('input-search-teams').addEventListener('input', (e) => {
+        renderTeamsTable(e.target.value.trim());
+      });
+
+      // Modal Open/Close Events
+      document.getElementById('btn-view-map-photo').addEventListener('click', () => {
+        document.getElementById('modal-map-photo').classList.remove('hidden');
+      });
+      document.getElementById('btn-close-map-photo').addEventListener('click', () => {
+        document.getElementById('modal-map-photo').classList.add('hidden');
+      });
+      document.querySelectorAll('.btn-toggle-original-map').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.getElementById('modal-map-photo').classList.remove('hidden');
+        });
+      });
+
+      document.getElementById('btn-open-sync').addEventListener('click', () => {
+        document.getElementById('modal-sync').classList.remove('hidden');
+      });
+      document.getElementById('btn-quick-sync').addEventListener('click', () => {
+        document.getElementById('modal-sync').classList.remove('hidden');
+      });
+      document.getElementById('btn-close-sync').addEventListener('click', () => {
+        document.getElementById('modal-sync').classList.add('hidden');
+      });
+
+      document.querySelectorAll('.btn-close-modal').forEach(b => {
+        b.addEventListener('click', () => {
+          document.querySelectorAll('#modal-map-photo, #modal-sync, #modal-booth-detail').forEach(m => m.classList.add('hidden'));
+        });
+      });
+
+      // Google Sheets Fetch Event
+      document.getElementById('btn-fetch-sheets').addEventListener('click', fetchGoogleSheetData);
+
+      // Excel File Upload Event
+      document.getElementById('input-excel-file').addEventListener('change', handleExcelUpload);
+
+      // Reset Default Event
+      document.getElementById('btn-reset-default').addEventListener('click', resetToDefaultData);
+
+      // Print Schedule
+      document.getElementById('btn-print-schedule').addEventListener('click', () => {
+        window.print();
+      });
+    }
+
+    // 3. Render Teacher Select Options
+    function renderTeacherSelect() {
+      const select = document.getElementById('select-teacher');
+      select.innerHTML = '';
+
+      const teacherList = Object.keys(currentData.teachers);
+      const filtered = teacherList.filter(name => {
+        const t = currentData.teachers[name];
+        if (currentFilterDept === 'ALL') return true;
+        if (currentFilterDept === '외부') return t.isExternal;
+        return t.dept === currentFilterDept;
+      });
+
+      filtered.forEach(name => {
+        const t = currentData.teachers[name];
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = `${name} (${t.dept} · ${t.type})`;
+        select.appendChild(opt);
+      });
+
+      if (filtered.length > 0) {
+        if (!filtered.includes(selectedTeacherName)) {
+          selectTeacher(filtered[0]);
+        } else {
+          select.value = selectedTeacherName;
+        }
+      }
+    }
+
+    // 4. Select Teacher & Render Timetable Cards
+    function selectTeacher(teacherName) {
+      selectedTeacherName = teacherName;
+      const select = document.getElementById('select-teacher');
+      select.value = teacherName;
+
+      const teacher = currentData.teachers[teacherName];
+      if (!teacher) return;
+
+      // Render Teacher Profile Card
+      const deptStyle = DEPT_STYLES[teacher.dept] || DEPT_STYLES['기타'];
+      const profileContainer = document.getElementById('teacher-profile-card');
+      profileContainer.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-lg text-slate-700 shadow-inner">
+              ${teacher.name.charAt(0)}
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${deptStyle.badge} border">
+                  ${teacher.dept}
+                </span>
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full ${teacher.isExternal ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-blue-100 text-blue-800 border border-blue-300'}">
+                  ${teacher.type}
+                </span>
+              </div>
+              <h2 class="text-lg font-bold text-slate-900 mt-0.5">${teacher.fullName}</h2>
+              <p class="text-xs text-slate-500">${teacher.affiliation || '창원과학고등학교'}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
+            <div class="text-center">
+              <span class="block text-[11px] text-slate-500">배정 횟수</span>
+              <strong class="text-base text-indigo-700">${teacher.count}회</strong>
+            </div>
+            <div class="w-px h-8 bg-slate-200"></div>
+            <div class="text-center">
+              <span class="block text-[11px] text-slate-500">컨설팅 일시</span>
+              <span class="text-xs font-semibold text-slate-700">09:30~12:30</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Render Schedule Cards
+      const cardsList = document.getElementById('schedule-cards-list');
+      cardsList.innerHTML = '';
+
+      teacher.schedule.forEach((boothStr, idx) => {
+        const periodNum = idx + 1;
+        const periodInfo = currentData.periods[idx];
+        const isRest = !boothStr || boothStr.trim() === '';
+
+        const card = document.createElement('div');
+        card.className = `rounded-xl p-4 border transition-all duration-200 ${
+          isRest 
+            ? 'bg-slate-50/70 border-dashed border-slate-200 text-slate-400' 
+            : 'bg-white border-slate-200 shadow-sm hover:shadow-md hover:border-teal-400 cursor-pointer'
+        }`;
+
+        if (isRest) {
+          card.innerHTML = `
+            <div class="flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2 font-medium">
+                <span class="w-6 h-6 rounded-lg bg-slate-200/80 text-slate-500 flex items-center justify-center font-bold text-[11px]">${periodNum}</span>
+                <span class="text-slate-500 font-semibold">${periodInfo.time}</span>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full bg-slate-200/60 text-slate-500 text-[11px]">배정 없음 (수업/자유 참관/휴식)</span>
+            </div>
+          `;
+        } else {
+          const teamId = parseInt(boothStr.replace('조', '').trim());
+          const topicInfo = currentData.topics[teamId] || { title: '주제 준비 중', advisor: '-', students: [] };
+          const topicDeptStyle = DEPT_STYLES[topicInfo.dept] || DEPT_STYLES['기타'];
+
+          card.innerHTML = `
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+              <div class="flex items-start gap-3">
+                <span class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-sm mt-0.5">
+                  ${periodNum}
+                </span>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-slate-500">${periodInfo.time}</span>
+                    <span class="text-xs font-bold px-2 py-0.5 rounded-md ${topicDeptStyle.badge} border">
+                      ${boothStr} 부스 (${topicInfo.dept || teacher.dept})
+                    </span>
+                  </div>
+                  <h4 class="text-sm font-bold text-slate-900 mt-1 leading-snug">
+                    ${topicInfo.title}
+                  </h4>
+                  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-slate-600">
+                    <div>
+                      <span class="text-slate-400">지도:</span> <strong class="text-slate-700">${topicInfo.advisor || '-'} 선생님</strong>
+                    </div>
+                    <div>
+                      <span class="text-slate-400">학생:</span> <span class="font-medium text-slate-800">${topicInfo.students.join(', ') || '-'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Button to highlight booth -->
+              <div class="sm:self-center mt-2 sm:mt-0 flex sm:flex-col items-end gap-1">
+                <button class="btn-highlight-booth inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 text-xs font-semibold shadow-xs" data-team="${teamId}">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  <span>위치 확인</span>
+                </button>
+              </div>
+            </div>
+          `;
+
+          // Card Click Event -> Highlight Booth
+          card.addEventListener('click', (e) => {
+            highlightBooth(teamId);
+          });
+        }
+
+        cardsList.appendChild(card);
+      });
+
+      // Highlight the first scheduled booth by default
+      const firstActiveBooth = teacher.schedule.find(s => s && s.trim() !== '');
+      if (firstActiveBooth) {
+        const teamId = parseInt(firstActiveBooth.replace('조', '').trim());
+        highlightBooth(teamId);
+      }
+    }
+
+    // 5. Render Interactive SVG Booth Map
+    function renderInteractiveMap(containerId, isSidecar = true) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const svgWidth = 780;
+      const svgHeight = 850;
+
+      let svgHtml = `
+        <svg viewBox="0 0 ${svgWidth} ${svgHeight}" class="w-full h-auto select-none font-sans" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background -->
+          <rect width="${svgWidth}" height="${svgHeight}" fill="#f8fafc" rx="16" />
+          
+          <!-- Outer border -->
+          <rect x="20" y="20" width="${svgWidth - 40}" height="${svgHeight - 40}" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4 4" rx="12" />
+
+          <!-- Stage (무대) at Top -->
+          <g>
+            <rect x="150" y="40" width="480" height="90" fill="#ffffff" stroke="#334155" stroke-width="2.5" rx="8" />
+            <text x="390" y="93" font-size="22" font-weight="bold" fill="#0f172a" text-anchor="middle">무 대</text>
+          </g>
+
+          <!-- Zone Labels -->
+          <text x="220" y="270" font-size="16" font-weight="bold" fill="#ea580c" text-anchor="middle">융 합</text>
+          <text x="585" y="415" font-size="18" font-weight="bold" fill="#ca8a04" text-anchor="middle">수 학</text>
+          <text x="220" y="450" font-size="16" font-weight="bold" fill="#16a34a" text-anchor="middle">생 명</text>
+          <text x="220" y="675" font-size="18" font-weight="bold" fill="#0d9488" text-anchor="middle">화 학</text>
+          <text x="585" y="675" font-size="18" font-weight="bold" fill="#7c3aed" text-anchor="middle">물 리</text>
+
+          <!-- Entrance at Bottom Right -->
+          <g transform="translate(560, 800)">
+            <text x="0" y="0" font-size="16" font-weight="bold" fill="#334155" text-anchor="start">강당 출입구 ➡</text>
+          </g>
+
+          <!-- Booths Layer -->
+          <g id="${containerId}-booths-layer">
+      `;
+
+      // Render each booth from APP_DATA.booths
+      for (const [teamNumStr, b] of Object.entries(currentData.booths)) {
+        const teamNum = parseInt(teamNumStr);
+        const topic = currentData.topics[teamNum] || {};
+        const isNotAssigned = b.note === '미배치';
+
+        svgHtml += `
+          <g class="booth-group" data-team="${teamNum}" id="${containerId}-booth-${teamNum}">
+            <rect 
+              x="${b.x}" 
+              y="${b.y}" 
+              width="${b.w}" 
+              height="${b.h}" 
+              fill="${b.color}" 
+              stroke="${b.border}" 
+              stroke-width="1.8" 
+              rx="6" 
+              class="booth-rect"
+            />
+            <text 
+              x="${b.x + b.w / 2}" 
+              y="${b.y + b.h / 2 + 5}" 
+              font-size="16" 
+              font-weight="bold" 
+              fill="#1e293b" 
+              text-anchor="middle" 
+              pointer-events="none"
+            >
+              ${teamNum}
+            </text>
+            ${isNotAssigned ? `
+              <text x="${b.x + b.w / 2}" y="${b.y + b.h - 5}" font-size="9" fill="#dc2626" font-weight="bold" text-anchor="middle" pointer-events="none">(미배치)</text>
+            ` : ''}
+          </g>
+        `;
+      }
+
+      svgHtml += `
+          </g>
+          <!-- Marker Pin (Hidden by default) -->
+          <g id="${containerId}-marker-pin" style="display:none; transition: all 0.3s ease;">
+            <circle cx="0" cy="0" r="14" fill="#dc2626" opacity="0.9" />
+            <circle cx="0" cy="0" r="22" fill="none" stroke="#dc2626" stroke-width="2" class="animate-ping-slow" />
+            <text x="0" y="5" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">📍</text>
+          </g>
+        </svg>
+      `;
+
+      container.innerHTML = svgHtml;
+
+      // Attach Click Event to Booths
+      container.querySelectorAll('.booth-group').forEach(group => {
+        group.addEventListener('click', () => {
+          const teamId = parseInt(group.getAttribute('data-team'));
+          highlightBooth(teamId);
+          showBoothModal(teamId);
+        });
+      });
+    }
+
+    // 6. Highlight Specific Booth in both maps
+    function highlightBooth(teamId) {
+      selectedBoothNumber = teamId;
+      const booth = currentData.booths[teamId];
+      if (!booth) return;
+
+      const badge = document.getElementById('active-booth-badge');
+      if (badge) {
+        badge.innerHTML = `선택된 조: <strong class="text-teal-700">${teamId}조 (${booth.dept})</strong>`;
+      }
+
+      // Update both map SVGs
+      ['interactive-map-container', 'full-interactive-map-container'].forEach(containerId => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        // Reset previous highlights
+        container.querySelectorAll('.booth-rect').forEach(r => r.classList.remove('booth-highlight'));
+
+        // Highlight target booth
+        const targetGroup = container.querySelector(`#${containerId}-booth-${teamId}`);
+        if (targetGroup) {
+          const rect = targetGroup.querySelector('.booth-rect');
+          if (rect) rect.classList.add('booth-highlight');
+
+          // Place Marker Pin
+          const pin = container.querySelector(`#${containerId}-marker-pin`);
+          if (pin) {
+            pin.style.display = 'block';
+            pin.setAttribute('transform', `translate(${booth.x + booth.w / 2}, ${booth.y - 12})`);
+          }
+        }
+      });
+
+      // Update Selected Booth Detail in Full Map Tab
+      renderSelectedBoothDetail(teamId);
+    }
+
+    // 7. Show Booth Detail in Modal
+    function showBoothModal(teamId) {
+      const topic = currentData.topics[teamId] || { title: '주제 준비 중', advisor: '-', students: [] };
+      const teamSched = currentData.teamsSchedule[teamId] || { schedule: [] };
+      const booth = currentData.booths[teamId];
+      const deptStyle = DEPT_STYLES[topic.dept] || DEPT_STYLES['기타'];
+
+      const header = document.getElementById('modal-booth-header');
+      header.innerHTML = `
+        <div class="flex items-center gap-2">
+          <span class="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center font-bold text-sm">
+            ${teamId}
+          </span>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">${teamId}조 부스 상세 정보</h3>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-md ${deptStyle.badge} border">${topic.dept}</span>
+          </div>
+        </div>
+      `;
+
+      let scheduleHtml = '';
+      currentData.periods.forEach((p, idx) => {
+        const teacherName = teamSched.schedule[idx] || '';
+        const isRest = !teacherName || teacherName.trim() === '';
+
+        scheduleHtml += `
+          <div class="flex items-center justify-between p-2 rounded-lg ${isRest ? 'bg-slate-50 text-slate-400' : 'bg-teal-50/70 border border-teal-200 text-teal-900'} text-xs">
+            <span class="font-semibold">${p.period}회차 (${p.time})</span>
+            <strong class="${isRest ? 'font-normal text-slate-400' : 'text-indigo-700 font-bold'}">${isRest ? '컨설팅 없음' : teacherName}</strong>
+          </div>
+        `;
+      });
+
+      const body = document.getElementById('modal-booth-body');
+      body.innerHTML = `
+        <div>
+          <span class="block text-xs font-semibold text-slate-400 mb-1">연구 주제</span>
+          <p class="text-sm font-bold text-slate-900 leading-snug bg-slate-50 p-3 rounded-xl border border-slate-200">
+            ${topic.title}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <span class="text-slate-400 block mb-0.5">지도교사</span>
+            <strong class="text-slate-800 text-sm">${topic.advisor || '-'} 선생님</strong>
+          </div>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <span class="text-slate-400 block mb-0.5">발표 학생</span>
+            <span class="text-slate-800 font-medium">${topic.students.join(', ') || '-'}</span>
+          </div>
+        </div>
+
+        <div>
+          <span class="block text-xs font-semibold text-slate-500 mb-2">회차별 방문 컨설팅 위원</span>
+          <div class="space-y-1.5">
+            ${scheduleHtml}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('modal-booth-detail').classList.remove('hidden');
+    }
+
+    // 8. Render Selected Booth Detail for Full Map Tab
+    function renderSelectedBoothDetail(teamId) {
+      const container = document.getElementById('selected-booth-detail');
+      if (!container) return;
+
+      const topic = currentData.topics[teamId] || { title: '주제 준비 중', advisor: '-', students: [] };
+      const teamSched = currentData.teamsSchedule[teamId] || { schedule: [] };
+      const deptStyle = DEPT_STYLES[topic.dept] || DEPT_STYLES['기타'];
+
+      let scheduleHtml = '';
+      currentData.periods.forEach((p, idx) => {
+        const teacherName = teamSched.schedule[idx] || '';
+        const isRest = !teacherName || teacherName.trim() === '';
+
+        scheduleHtml += `
+          <div class="flex items-center justify-between py-1.5 px-2.5 rounded-lg ${isRest ? 'bg-slate-100/70 text-slate-400' : 'bg-white border border-slate-200 text-slate-800 shadow-2xs'} text-xs">
+            <span class="font-medium">${p.period}회 (${p.time})</span>
+            <strong class="${isRest ? 'font-normal' : 'text-indigo-600'}">${isRest ? '-' : teacherName}</strong>
+          </div>
+        `;
+      });
+
+      container.innerHTML = `
+        <div class="flex items-center gap-2 pb-3 border-b border-slate-200">
+          <span class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-sm">
+            ${teamId}
+          </span>
+          <div>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-md ${deptStyle.badge} border">${topic.dept}</span>
+            <h4 class="text-sm font-bold text-slate-900 mt-0.5">${teamId}조 부스</h4>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-[11px] text-slate-400 block mb-1">연구 주제</span>
+          <p class="text-xs font-bold text-slate-900 bg-white p-3 rounded-xl border border-slate-200 leading-snug">
+            ${topic.title}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+            <span class="text-[11px] text-slate-400 block">지도교사</span>
+            <strong class="text-slate-800">${topic.advisor || '-'}</strong>
+          </div>
+          <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+            <span class="text-[11px] text-slate-400 block">발표 학생</span>
+            <strong class="text-slate-800">${topic.students.join(', ') || '-'}</strong>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-[11px] text-slate-400 block mb-1.5 font-semibold">회차별 컨설팅 위원</span>
+          <div class="space-y-1">
+            ${scheduleHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    // 9. Render Teams & Topics Table
+    function renderTeamsTable(query = '') {
+      const tbody = document.getElementById('teams-table-body');
+      tbody.innerHTML = '';
+
+      const teamIds = Object.keys(currentData.topics).map(Number).sort((a,b) => a - b);
+
+      teamIds.forEach(teamId => {
+        if (teamId === 29) return; // 29조는 미배치
+
+        const topic = currentData.topics[teamId];
+        const teamSched = currentData.teamsSchedule[teamId] || { schedule: [] };
+        const deptStyle = DEPT_STYLES[topic.dept] || DEPT_STYLES['기타'];
+
+        // Filter by Query
+        if (query) {
+          const q = query.toLowerCase();
+          const match = 
+            teamId.toString().includes(q) ||
+            (topic.title && topic.title.toLowerCase().includes(q)) ||
+            (topic.advisor && topic.advisor.toLowerCase().includes(q)) ||
+            (topic.dept && topic.dept.toLowerCase().includes(q)) ||
+            (topic.students && topic.students.join(' ').toLowerCase().includes(q));
+          if (!match) return;
+        }
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition-colors cursor-pointer';
+
+        // Badges for 8 periods
+        let schedBadges = '<div class="flex flex-wrap gap-1">';
+        currentData.periods.forEach((p, idx) => {
+          const tName = teamSched.schedule[idx];
+          if (tName && tName.trim() !== '') {
+            schedBadges += `<span class="px-1.5 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11px] font-medium" title="${p.time}">${idx+1}회: ${tName}</span>`;
+          }
+        });
+        schedBadges += '</div>';
+
+        tr.innerHTML = `
+          <td class="p-3 text-center font-bold text-slate-800">${teamId}조</td>
+          <td class="p-3">
+            <span class="px-2 py-0.5 rounded-md text-xs font-bold ${deptStyle.badge} border">${topic.dept}</span>
+          </td>
+          <td class="p-3 font-semibold text-slate-900 leading-snug">${topic.title}</td>
+          <td class="p-3 font-medium text-slate-700">${topic.advisor || '-'}</td>
+          <td class="p-3 text-slate-600 font-medium">${topic.students.join(', ')}</td>
+          <td class="p-3">${schedBadges}</td>
+        `;
+
+        tr.addEventListener('click', () => {
+          showBoothModal(teamId);
+          highlightBooth(teamId);
+        });
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // 10. Render Matrix View (All Periods)
+    function renderMatrixView(activePeriod = 1) {
+      const tabsContainer = document.getElementById('matrix-period-tabs');
+      tabsContainer.innerHTML = '';
+
+      currentData.periods.forEach(p => {
+        const btn = document.createElement('button');
+        const isActive = p.period === activePeriod;
+        btn.className = `px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
+          isActive 
+            ? 'bg-purple-600 text-white shadow-sm' 
+            : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+        }`;
+        btn.textContent = `${p.period}회 (${p.time})`;
+        btn.addEventListener('click', () => renderMatrixView(p.period));
+        tabsContainer.appendChild(btn);
+      });
+
+      const content = document.getElementById('matrix-period-content');
+      const periodIdx = activePeriod - 1;
+      const periodInfo = currentData.periods[periodIdx];
+
+      let cardsHtml = `
+        <div class="bg-purple-50 border border-purple-200 rounded-xl p-3 text-xs text-purple-900 flex items-center justify-between">
+          <span>⏰ 현재 보고 있는 회차: <strong>${periodInfo.label}</strong> (총 28개 부스)</span>
+          <span class="text-purple-700 font-medium">컨설팅 20분 진행</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      `;
+
+      for (let teamId = 1; teamId <= 28; teamId++) {
+        const topic = currentData.topics[teamId] || {};
+        const teamSched = currentData.teamsSchedule[teamId] || { schedule: [] };
+        const assignedTeacher = teamSched.schedule[periodIdx];
+        const isAssigned = assignedTeacher && assignedTeacher.trim() !== '';
+        const deptStyle = DEPT_STYLES[topic.dept] || DEPT_STYLES['기타'];
+
+        cardsHtml += `
+          <div class="bg-white rounded-xl p-3 border ${isAssigned ? 'border-slate-200 shadow-xs' : 'border-dashed border-slate-200 opacity-60'} hover:border-purple-400 transition-all cursor-pointer" onclick="highlightBooth(${teamId}); showBoothModal(${teamId});">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="w-6 h-6 rounded-md bg-slate-800 text-white text-xs font-bold flex items-center justify-center">${teamId}</span>
+              <span class="text-[11px] font-semibold px-2 py-0.5 rounded ${deptStyle.badge} border">${topic.dept}</span>
+            </div>
+            <h5 class="text-xs font-bold text-slate-900 line-clamp-2 h-8 leading-snug mb-2" title="${topic.title}">
+              ${topic.title || '주제 준비 중'}
+            </h5>
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span class="text-slate-400 text-[11px]">담당 위원:</span>
+              <strong class="${isAssigned ? 'text-indigo-700 font-bold' : 'text-slate-400 font-normal'}">
+                ${isAssigned ? assignedTeacher : '없음 (대기)'}
+              </strong>
+            </div>
+          </div>
+        `;
+      }
+
+      cardsHtml += '</div>';
+      content.innerHTML = cardsHtml;
+    }
+
+    // 11. Google Sheets Live Sync
+    async function fetchGoogleSheetData() {
+      const urlInput = document.getElementById('input-sheets-url');
+      let url = urlInput.value.trim();
+
+      if (!url) {
+        alert('구글 스프레드시트 CSV 내보내기 URL을 입력해 주세요.\n예: https://docs.google.com/spreadsheets/d/.../export?format=csv');
+        return;
+      }
+
+      try {
+        const btn = document.getElementById('btn-fetch-sheets');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span>데이터 불러오는 중...</span>';
+        btn.disabled = true;
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('시트 데이터를 가져오지 못했습니다. (권한 또는 URL을 확인하세요)');
+
+        const text = await res.text();
+        const workbook = XLSX.read(text, { type: 'string' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+        applyParsedRowsToTopics(rows);
+        localStorage.setItem('RnE_sheets_url', url);
+
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        document.getElementById('modal-sync').classList.add('hidden');
+        alert('구글 스프레드시트의 최신 연구주제가 성공적으로 동기화되었습니다!');
+      } catch (err) {
+        alert('구글 시트 연동 오류: ' + err.message);
+        document.getElementById('btn-fetch-sheets').disabled = false;
+      }
+    }
+
+    // 12. Excel Upload Handler
+    function handleExcelUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = new Uint8Array(evt.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+          applyParsedRowsToTopics(rows);
+          document.getElementById('modal-sync').classList.add('hidden');
+          alert('엑셀 파일의 최신 연구주제가 화면에 적용되었습니다!');
+        } catch (err) {
+          alert('엑셀 파일 파싱 오류: ' + err.message);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // Helper: Apply Parsed Rows to topics
+    function applyParsedRowsToTopics(rows) {
+      const updatedTopics = {};
+      
+      rows.forEach(r => {
+        if (!r || r.length === 0) return;
+        const firstCol = r[0] ? r[0].toString().trim() : '';
+        if (/^\d+$/.test(firstCol)) {
+          const teamId = parseInt(firstCol);
+          const dept = r[1] ? r[1].toString().trim() : '';
+          const title = r[2] ? r[2].toString().trim() : '';
+          const advisor = r[3] ? r[3].toString().trim() : '';
+          const students = [];
+          for (let i = 4; i < r.length; i++) {
+            if (r[i] && r[i].toString().trim()) {
+              students.push(r[i].toString().trim());
+            }
+          }
+          updatedTopics[teamId] = {
+            teamId,
+            dept: dept || (currentData.topics[teamId] ? currentData.topics[teamId].dept : '기타'),
+            title: title || (currentData.topics[teamId] ? currentData.topics[teamId].title : ''),
+            advisor: advisor || (currentData.topics[teamId] ? currentData.topics[teamId].advisor : ''),
+            students: students.length > 0 ? students : (currentData.topics[teamId] ? currentData.topics[teamId].students : [])
+          };
+        }
+      });
+
+      if (Object.keys(updatedTopics).length > 0) {
+        currentData.topics = updatedTopics;
+        localStorage.setItem('RnE_custom_topics', JSON.stringify(updatedTopics));
+
+        document.getElementById('sync-info-text').innerHTML = `연구주제 데이터: <strong>최신 동기화 데이터 적용 중</strong> (총 ${Object.keys(updatedTopics).length}개 조)`;
+
+        // Re-render UI
+        if (selectedTeacherName) selectTeacher(selectedTeacherName);
+        renderTeamsTable();
+        renderMatrixView(1);
+      } else {
+        alert('조 번호(숫자)가 포함된 행을 찾지 못했습니다.');
+      }
+    }
+
+    // 13. Reset to Default Data
+    function resetToDefaultData() {
+      if (confirm('초기 파일(연구주제목록.xlsx)의 기본 데이터로 복원하시겠습니까?')) {
+        localStorage.removeItem('RnE_custom_topics');
+        currentData.topics = JSON.parse(JSON.stringify(INITIAL_DATA.topics));
+        document.getElementById('sync-info-text').innerHTML = '연구주제 데이터: <strong>연구주제목록.xlsx</strong> 기본 데이터 적용 중 (총 28개 조)';
+        if (selectedTeacherName) selectTeacher(selectedTeacherName);
+        renderTeamsTable();
+        renderMatrixView(1);
+        document.getElementById('modal-sync').classList.add('hidden');
+        alert('기본 데이터로 복원되었습니다.');
+      }
+    }
+
+    // 14. Filter Teachers by Search Query
+    function filterTeachersByQuery(query) {
+      if (!query) {
+        renderTeacherSelect();
+        return;
+      }
+      const q = query.toLowerCase();
+      const matchedTeachers = Object.keys(currentData.teachers).filter(name => {
+        const t = currentData.teachers[name];
+        if (name.toLowerCase().includes(q)) return true;
+        if (t.dept.toLowerCase().includes(q)) return true;
+        
+        // Search inside teacher's assigned topics or students
+        return t.schedule.some(boothStr => {
+          if (!boothStr) return false;
+          const teamId = parseInt(boothStr.replace('조', '').trim());
+          const topic = currentData.topics[teamId];
+          if (!topic) return false;
+          return (
+            (topic.title && topic.title.toLowerCase().includes(q)) ||
+            (topic.advisor && topic.advisor.toLowerCase().includes(q)) ||
+            (topic.students && topic.students.join(' ').toLowerCase().includes(q))
+          );
+        });
+      });
+
+      const select = document.getElementById('select-teacher');
+      select.innerHTML = '';
+      matchedTeachers.forEach(name => {
+        const t = currentData.teachers[name];
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = `${name} (${t.dept} · ${t.type})`;
+        select.appendChild(opt);
+      });
+
+      if (matchedTeachers.length > 0) {
+        selectTeacher(matchedTeachers[0]);
+      }
+    }
+  </script>
+</body>
+</html>
