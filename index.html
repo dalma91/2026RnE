@@ -1118,9 +1118,7 @@
       });
     }
 
-    // 10. Render Matrix View (All Periods) - Redesigned for High Contrast & Visual Clarity
-    let matrixOnlyActive = false; // Toggle to filter only active sessions
-
+    // 10. Render Matrix View (All Periods) - 1~28 In-Place Order with Department Active Colors
     function renderMatrixView(activePeriod = 1) {
       const tabsContainer = document.getElementById('matrix-period-tabs');
       tabsContainer.innerHTML = '';
@@ -1132,7 +1130,7 @@
           border: 'border-2 border-amber-400 shadow-sm shadow-amber-200/50',
           numBadge: 'bg-amber-500 text-white',
           deptBadge: 'bg-amber-200 text-amber-900 border border-amber-400/60',
-          teacherBox: 'bg-white/90 border border-amber-300',
+          teacherBox: 'bg-white/95 border border-amber-300',
           teacherText: 'text-amber-950 font-black text-sm sm:text-base',
           statusDot: 'bg-amber-500',
           statusText: 'text-amber-800'
@@ -1142,7 +1140,7 @@
           border: 'border-2 border-purple-400 shadow-sm shadow-purple-200/50',
           numBadge: 'bg-purple-600 text-white',
           deptBadge: 'bg-purple-200 text-purple-900 border border-purple-400/60',
-          teacherBox: 'bg-white/90 border border-purple-300',
+          teacherBox: 'bg-white/95 border border-purple-300',
           teacherText: 'text-purple-950 font-black text-sm sm:text-base',
           statusDot: 'bg-purple-600',
           statusText: 'text-purple-800'
@@ -1152,7 +1150,7 @@
           border: 'border-2 border-teal-400 shadow-sm shadow-teal-200/50',
           numBadge: 'bg-teal-600 text-white',
           deptBadge: 'bg-teal-200 text-teal-900 border border-teal-400/60',
-          teacherBox: 'bg-white/90 border border-teal-300',
+          teacherBox: 'bg-white/95 border border-teal-300',
           teacherText: 'text-teal-950 font-black text-sm sm:text-base',
           statusDot: 'bg-teal-600',
           statusText: 'text-teal-800'
@@ -1162,7 +1160,7 @@
           border: 'border-2 border-emerald-400 shadow-sm shadow-emerald-200/50',
           numBadge: 'bg-emerald-600 text-white',
           deptBadge: 'bg-emerald-200 text-emerald-900 border border-emerald-400/60',
-          teacherBox: 'bg-white/90 border border-emerald-300',
+          teacherBox: 'bg-white/95 border border-emerald-300',
           teacherText: 'text-emerald-950 font-black text-sm sm:text-base',
           statusDot: 'bg-emerald-600',
           statusText: 'text-emerald-800'
@@ -1172,7 +1170,7 @@
           border: 'border-2 border-orange-400 shadow-sm shadow-orange-200/50',
           numBadge: 'bg-orange-500 text-white',
           deptBadge: 'bg-orange-200 text-orange-900 border border-orange-400/60',
-          teacherBox: 'bg-white/90 border border-orange-300',
+          teacherBox: 'bg-white/95 border border-orange-300',
           teacherText: 'text-orange-950 font-black text-sm sm:text-base',
           statusDot: 'bg-orange-500',
           statusText: 'text-orange-800'
@@ -1210,25 +1208,16 @@
       const periodInfo = currentData.periods[periodIdx];
 
       // Calculate totals for active period
-      let activeTeams = [];
-      let restingTeams = [];
-
-      for (let teamId = 1; teamId <= 28; teamId++) {
-        const topic = currentData.topics[teamId] || {};
-        const teamSched = currentData.teamsSchedule[teamId] || { schedule: [] };
-        const assignedTeacher = teamSched.schedule[periodIdx];
-        const isAssigned = assignedTeacher && assignedTeacher.trim() !== '';
-
-        if (isAssigned) {
-          activeTeams.push({ teamId, topic, assignedTeacher, isAssigned: true });
-        } else {
-          restingTeams.push({ teamId, topic, assignedTeacher: '', isAssigned: false });
-        }
+      let activeCount = 0;
+      for (let t = 1; t <= 28; t++) {
+        const s = currentData.teamsSchedule[t];
+        if (s && s.schedule[periodIdx] && s.schedule[periodIdx].trim() !== '') activeCount++;
       }
+      const restingCount = 28 - activeCount;
 
-      // Summary Bar with Toggle Filter
+      // Summary Bar
       let html = `
-        <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           <div class="flex items-center gap-3">
             <span class="w-10 h-10 rounded-xl bg-teal-500 text-white font-black text-lg flex items-center justify-center shadow-md">
               ${periodInfo.period}
@@ -1240,127 +1229,106 @@
                 </span>
               </div>
               <h3 class="text-base font-bold text-white mt-0.5">
-                총 28개 부스 중 <strong class="text-amber-300 text-lg">${activeTeams.length}개 조</strong> 컨설팅 진행 중
-                <span class="text-xs font-normal text-slate-300">(${restingTeams.length}개 조 대기)</span>
+                총 28개 부스 중 <strong class="text-amber-300 text-lg">${activeCount}개 조</strong> 컨설팅 진행 중
+                <span class="text-xs font-normal text-slate-300">(${restingCount}개 조 대기)</span>
               </h3>
             </div>
           </div>
-
-          <!-- Filter Toggle Button -->
-          <div class="flex items-center gap-2 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700">
-            <button id="btn-matrix-all" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${!matrixOnlyActive ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:text-white'}">
-              전체 28개 부스 보기
-            </button>
-            <button id="btn-matrix-active-only" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${matrixOnlyActive ? 'bg-teal-600 text-white' : 'text-slate-300 hover:text-white'}">
-              🟢 진행 중인 부스만 모아보기 (${activeTeams.length})
-            </button>
+          <div class="flex items-center gap-3 text-xs text-slate-300">
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-md bg-amber-400"></span> 진행 조: 교과 배정색</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-md bg-slate-200 border border-dashed border-slate-400"></span> 미진행 조: 회색</span>
           </div>
         </div>
 
-        <!-- Section: Active Sessions (Bright & Distinct Department Color) -->
-        <div>
-          <div class="flex items-center gap-2 mb-3 mt-5 px-1">
-            <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-            <h4 class="text-sm font-black text-slate-900">
-              현재 컨설팅 진행 중인 부스 (${activeTeams.length}개 조)
-            </h4>
-            <span class="text-xs text-slate-500">- 교과별 배정 색상으로 선명하게 강조됩니다</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
+        <!-- 1~28 Booths in Original Sequential Order (In-Place) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
       `;
 
-      // Render Active Teams
-      activeTeams.forEach(item => {
-        const { teamId, topic, assignedTeacher } = item;
-        const theme = MATRIX_THEMES[topic.dept] || MATRIX_THEMES['수학'];
+      // Render 1 to 28 in sequential order
+      for (let teamId = 1; teamId <= 28; teamId++) {
+        const topic = currentData.topics[teamId] || {};
+        const teamSched = currentData.teamsSchedule[teamId] || { schedule: [] };
+        const assignedTeacher = teamSched.schedule[periodIdx];
+        const isAssigned = assignedTeacher && assignedTeacher.trim() !== '';
 
-        html += `
-          <div class="${theme.cardBg} ${theme.border} rounded-2xl p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer relative overflow-hidden" onclick="highlightBooth(${teamId}); showBoothModal(${teamId});">
-            
-            <!-- Top Header: Booth Number, Department, Status -->
-            <div class="flex items-center justify-between mb-2.5">
-              <div class="flex items-center gap-2">
-                <span class="w-7 h-7 rounded-xl ${theme.numBadge} font-black text-xs flex items-center justify-center shadow-xs">
-                  ${teamId}
-                </span>
-                <span class="text-xs font-black px-2 py-0.5 rounded-lg ${theme.deptBadge}">
-                  ${topic.dept}
-                </span>
-              </div>
-              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/90 border border-white text-[11px] font-bold ${theme.statusText} shadow-2xs">
-                <span class="w-2 h-2 rounded-full ${theme.statusDot} animate-pulse"></span>
-                진행 중
-              </span>
-            </div>
-
-            <!-- Big Highlighted Teacher Box -->
-            <div class="${theme.teacherBox} rounded-xl p-2.5 mb-2.5 shadow-2xs">
-              <span class="text-[10px] font-semibold text-slate-500 block mb-0.5">담당 컨설팅 위원</span>
-              <div class="flex items-center justify-between">
-                <strong class="${theme.teacherText}">${assignedTeacher}</strong>
-                <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">20분</span>
-              </div>
-            </div>
-
-            <!-- Topic Title -->
-            <h5 class="text-xs font-bold text-slate-900 line-clamp-2 h-9 leading-snug mb-2.5" title="${topic.title}">
-              ${topic.title || '주제 준비 중'}
-            </h5>
-
-            <!-- Footer: Advisor & Students -->
-            <div class="pt-2 border-t border-black/5 flex items-center justify-between text-[11px] text-slate-700">
-              <span class="truncate max-w-[110px]">지도: <strong>${topic.advisor || '-'}</strong></span>
-              <span class="font-medium text-slate-900 truncate max-w-[120px]">${topic.students.join(', ')}</span>
-            </div>
-          </div>
-        `;
-      });
-
-      html += `</div></div>`;
-
-      // Render Resting/Idle Teams (Muted, Faded, Low-contrast) unless filter is active
-      if (!matrixOnlyActive) {
-        html += `
-          <div class="mt-8 pt-6 border-t border-slate-200">
-            <div class="flex items-center gap-2 mb-3 px-1">
-              <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
-              <h4 class="text-xs font-bold text-slate-400">
-                이번 회차 컨설팅 없음 / 자율 참관 대기 부스 (${restingTeams.length}개 조)
-              </h4>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2.5">
-        `;
-
-        restingTeams.forEach(item => {
-          const { teamId, topic } = item;
+        if (isAssigned) {
+          // ACTIVE: Distinct department color, big teacher box, high contrast
+          const theme = MATRIX_THEMES[topic.dept] || MATRIX_THEMES['수학'];
           html += `
-            <div class="bg-slate-100/40 border border-dashed border-slate-300/60 rounded-xl p-2.5 opacity-40 hover:opacity-100 hover:bg-white hover:border-slate-300 transition-all duration-200 cursor-pointer" onclick="highlightBooth(${teamId}); showBoothModal(${teamId});" title="${topic.title}">
-              <div class="flex items-center justify-between mb-1">
-                <span class="w-5 h-5 rounded-md bg-slate-300 text-slate-600 font-bold text-[10px] flex items-center justify-center">${teamId}</span>
-                <span class="text-[10px] text-slate-400">${topic.dept}</span>
+            <div class="${theme.cardBg} ${theme.border} rounded-2xl p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer relative overflow-hidden" onclick="highlightBooth(${teamId}); showBoothModal(${teamId});">
+              
+              <!-- Header -->
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-7 h-7 rounded-xl ${theme.numBadge} font-black text-xs flex items-center justify-center shadow-xs">
+                    ${teamId}
+                  </span>
+                  <span class="text-xs font-black px-2 py-0.5 rounded-lg ${theme.deptBadge}">
+                    ${topic.dept}
+                  </span>
+                </div>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/90 border border-white text-[11px] font-bold ${theme.statusText} shadow-2xs">
+                  <span class="w-2 h-2 rounded-full ${theme.statusDot} animate-pulse"></span>
+                  진행 중
+                </span>
               </div>
-              <p class="text-[11px] text-slate-400 truncate mb-1">${topic.title || '주제'}</p>
-              <span class="block text-[10px] text-slate-400/80 font-medium">대기 (배정 없음)</span>
+
+              <!-- Big Teacher Box -->
+              <div class="${theme.teacherBox} rounded-xl p-2.5 mb-2.5 shadow-2xs">
+                <span class="text-[10px] font-semibold text-slate-500 block mb-0.5">담당 컨설팅 위원</span>
+                <div class="flex items-center justify-between">
+                  <strong class="${theme.teacherText}">${assignedTeacher}</strong>
+                  <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">20분</span>
+                </div>
+              </div>
+
+              <!-- Topic Title -->
+              <h5 class="text-xs font-bold text-slate-900 line-clamp-2 h-9 leading-snug mb-2" title="${topic.title}">
+                ${topic.title || '주제 준비 중'}
+              </h5>
+
+              <!-- Footer -->
+              <div class="pt-2 border-t border-black/5 flex items-center justify-between text-[11px] text-slate-700">
+                <span class="truncate max-w-[110px]">지도: <strong>${topic.advisor || '-'}</strong></span>
+                <span class="font-medium text-slate-900 truncate max-w-[120px]">${topic.students.join(', ')}</span>
+              </div>
             </div>
           `;
-        });
+        } else {
+          // IDLE: Muted, in-place, faded gray dashed box
+          html += `
+            <div class="bg-slate-100/50 border border-dashed border-slate-300/60 rounded-2xl p-4 opacity-35 hover:opacity-100 hover:bg-white hover:border-slate-300 transition-all duration-200 cursor-pointer" onclick="highlightBooth(${teamId}); showBoothModal(${teamId});" title="${topic.title}">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-6 h-6 rounded-lg bg-slate-300 text-slate-600 font-bold text-xs flex items-center justify-center">
+                    ${teamId}
+                  </span>
+                  <span class="text-[11px] text-slate-400 font-semibold px-2 py-0.5 rounded-md bg-slate-200/50">
+                    ${topic.dept}
+                  </span>
+                </div>
+                <span class="text-[10px] text-slate-400 font-medium">대기</span>
+              </div>
 
-        html += `</div></div>`;
+              <div class="bg-slate-200/40 rounded-xl p-2.5 mb-2.5 text-center">
+                <span class="text-xs text-slate-400 font-semibold">컨설팅 없음</span>
+              </div>
+
+              <h5 class="text-xs text-slate-400 line-clamp-2 h-9 leading-snug mb-2 font-normal" title="${topic.title}">
+                ${topic.title || '주제'}
+              </h5>
+
+              <div class="pt-2 border-t border-slate-200/50 flex items-center justify-between text-[11px] text-slate-400">
+                <span>지도: ${topic.advisor || '-'}</span>
+                <span class="truncate max-w-[120px]">${topic.students.join(', ')}</span>
+              </div>
+            </div>
+          `;
+        }
       }
 
+      html += `</div>`;
       content.innerHTML = html;
-
-      // Attach Toggle Events
-      document.getElementById('btn-matrix-all').addEventListener('click', () => {
-        matrixOnlyActive = false;
-        renderMatrixView(activePeriod);
-      });
-      document.getElementById('btn-matrix-active-only').addEventListener('click', () => {
-        matrixOnlyActive = true;
-        renderMatrixView(activePeriod);
-      });
     }
 
     // 11. Google Sheets Live Sync
