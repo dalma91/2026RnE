@@ -128,6 +128,9 @@
         <button class="nav-tab px-3.5 py-2.5 text-xs sm:text-sm font-medium border-b-2 border-transparent text-slate-300 hover:text-white flex items-center gap-2 whitespace-nowrap" data-tab="matrix-view">
           <span>⏰ 종합 타임테이블 현황판</span>
         </button>
+        <button class="nav-tab px-3.5 py-2.5 text-xs sm:text-sm font-bold border-b-2 border-transparent text-amber-300 hover:text-white flex items-center gap-2 whitespace-nowrap bg-amber-500/10 hover:bg-amber-500/20 rounded-t-lg transition-colors" data-tab="parents-view">
+          <span>👨‍👩‍👧 학생·학부모 부스 안내</span>
+        </button>
       </div>
     </div>
   </header>
@@ -369,6 +372,123 @@
       </div>
     </section>
 
+    <!-- TAB 5: PARENTS & STUDENTS BOOTH FINDER -->
+    <section id="tab-parents-view" class="tab-content hidden">
+      <!-- Search Banner -->
+      <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 rounded-3xl p-5 sm:p-7 text-white shadow-lg mb-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur text-xs font-semibold">
+            <span>👨‍👩‍👧 학부모 참관 안내 (15:00 ~ 16:00)</span>
+          </div>
+          <a href="parents.html" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-xs font-bold text-white transition-all backdrop-blur self-start sm:self-auto border border-white/20">
+            <span>📱 학부모 전용 단독화면 열기</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          </a>
+        </div>
+        
+        <h2 class="text-xl sm:text-2xl font-black tracking-tight mb-1.5">
+          학생 이름으로 발표 부스 찾기
+        </h2>
+        <p class="text-amber-100 text-xs sm:text-sm leading-relaxed max-w-2xl">
+          학생(자녀)의 이름을 입력하시면 소속된 연구 조와 발표 주제, 체육관 행사장 내 부스 위치를 도면에서 바로 안내해 드립니다.
+        </p>
+
+        <!-- Search Input Bar -->
+        <div class="mt-5">
+          <div class="relative max-w-2xl">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </div>
+            <input 
+              type="text" 
+              id="input-parent-search" 
+              placeholder="학생 이름을 입력하세요 (예: 김범준, 최원우, 배민준...)" 
+              class="w-full pl-11 pr-10 py-3.5 bg-white text-slate-900 rounded-2xl text-sm sm:text-base font-bold placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-amber-300 shadow-xl transition-all"
+              autocomplete="off"
+            />
+            <button 
+              id="btn-parent-search-clear" 
+              type="button"
+              class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-700 hidden text-lg font-bold"
+              title="검색어 지우기"
+            >
+              ✕
+            </button>
+          </div>
+
+          <!-- Quick Name Chips / Suggestions -->
+          <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs text-white/90">
+            <span class="font-bold text-amber-100">추천 검색:</span>
+            <button class="parent-chip px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 backdrop-blur font-bold text-amber-100 border border-white/20 transition-all" data-name="김범준">
+              ⭐ 김범준 (동명이인 2명)
+            </button>
+            <button class="parent-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 backdrop-blur transition-all" data-name="예성권">예성권 (수학 1조)</button>
+            <button class="parent-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 backdrop-blur transition-all" data-name="김시형">김시형 (물리 10조)</button>
+            <button class="parent-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 backdrop-blur transition-all" data-name="윤주한">윤주한 (화학 16조)</button>
+            <button class="parent-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 backdrop-blur transition-all" data-name="권시운">권시운 (생명 22조)</button>
+            <button class="parent-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 backdrop-blur transition-all" data-name="김재윤">김재윤 (융합 26조)</button>
+            <button class="parent-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 backdrop-blur transition-all font-semibold" data-name="ALL">전체 명단 보기</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Results & Floor Map Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left: Search Results & Team Cards (5 cols on lg) -->
+        <div class="lg:col-span-5 space-y-4">
+          <!-- Status / Summary Bar -->
+          <div id="parent-search-summary" class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span id="parent-summary-indicator" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+              <span id="parent-summary-text" class="text-xs sm:text-sm font-semibold text-slate-700">학생 이름을 입력해 주세요.</span>
+            </div>
+            <span id="parent-count-badge" class="hidden px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200"></span>
+          </div>
+
+          <!-- Cards List Container -->
+          <div id="parent-results-list" class="space-y-3.5">
+            <!-- Dynamic Cards generated by JS -->
+          </div>
+        </div>
+
+        <!-- Right: Interactive Map (7 cols on lg) -->
+        <div class="lg:col-span-7 space-y-4 lg:sticky lg:top-24">
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5">
+            <div class="flex items-center justify-between mb-3 pb-3 border-b border-slate-100">
+              <div>
+                <h3 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
+                  체육관 부스 위치 안내도
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">카드를 클릭하거나 부스를 터치하면 해당 위치에 붉은색 핀이 표시됩니다.</p>
+              </div>
+              <div id="parents-active-booth-badge" class="text-xs px-3 py-1 rounded-xl bg-slate-100 text-slate-700 font-semibold border border-slate-200">
+                선택된 부스: 없음
+              </div>
+            </div>
+
+            <!-- SVG Map Container -->
+            <div id="parents-interactive-map-container" class="w-full bg-slate-50 rounded-xl overflow-hidden border border-slate-200 shadow-inner p-1">
+              <!-- Rendered via JS -->
+            </div>
+
+            <!-- Direction Guide Box -->
+            <div id="parents-direction-box" class="mt-4 p-4 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-slate-700">
+              <div class="font-bold text-amber-900 mb-1 flex items-center gap-1.5">
+                <span>🧭</span> 출입구에서 찾아오시는 길 안내
+              </div>
+              <p id="parents-direction-text" class="leading-relaxed text-slate-700">
+                학생 이름을 검색하신 후 카드를 클릭하시면 출입구로부터 해당 부스까지의 최적 이동 동선이 안내됩니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- ================= MODAL: ORIGINAL MAP PHOTO ================= -->
@@ -517,6 +637,9 @@
       if (firstTeacher) {
         selectTeacher(firstTeacher);
       }
+
+      // Check URL parameters and Hash (#parents, ?tab=parents, ?name=...)
+      handleInitialRoute();
     });
 
     // 1. Data Loading & LocalStorage Persistence
@@ -542,24 +665,76 @@
     }
 
     // 2. UI Event Handlers
+    function switchTab(target) {
+      document.querySelectorAll('.nav-tab').forEach(t => {
+        if (t.getAttribute('data-tab') === target) {
+          t.classList.add('active', 'border-teal-400', 'text-teal-300');
+          t.classList.remove('border-transparent', 'text-slate-300');
+        } else {
+          t.classList.remove('active', 'border-teal-400', 'text-teal-300');
+          t.classList.add('border-transparent', 'text-slate-300');
+        }
+      });
+
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+      const targetEl = document.getElementById('tab-' + target);
+      if (targetEl) targetEl.classList.remove('hidden');
+
+      if (target === 'map-view') {
+        renderInteractiveMap('full-interactive-map-container', false);
+      } else if (target === 'parents-view') {
+        renderInteractiveMap('parents-interactive-map-container', false);
+        const searchInput = document.getElementById('input-parent-search');
+        if (searchInput && searchInput.value.trim()) {
+          searchStudents(searchInput.value.trim());
+        } else {
+          searchStudents('');
+        }
+      }
+    }
+
     function initUIEvents() {
       // Tab Navigation
       document.querySelectorAll('.nav-tab').forEach(tab => {
         tab.addEventListener('click', () => {
-          document.querySelectorAll('.nav-tab').forEach(t => {
-            t.classList.remove('active', 'border-teal-400', 'text-teal-300');
-            t.classList.add('border-transparent', 'text-slate-300');
-          });
-          tab.classList.add('active', 'border-teal-400', 'text-teal-300');
-          tab.classList.remove('border-transparent', 'text-slate-300');
-
           const target = tab.getAttribute('data-tab');
-          document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-          document.getElementById('tab-' + target).classList.remove('hidden');
+          switchTab(target);
+        });
+      });
 
-          if (target === 'map-view') {
-            renderInteractiveMap('full-interactive-map-container', false);
+      // Parents View Search Events
+      const parentInput = document.getElementById('input-parent-search');
+      if (parentInput) {
+        parentInput.addEventListener('input', (e) => {
+          searchStudents(e.target.value);
+        });
+        parentInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            searchStudents(e.target.value);
           }
+        });
+      }
+
+      const parentClearBtn = document.getElementById('btn-parent-search-clear');
+      if (parentClearBtn) {
+        parentClearBtn.addEventListener('click', () => {
+          if (parentInput) {
+            parentInput.value = '';
+            parentInput.focus();
+          }
+          searchStudents('');
+        });
+      }
+
+      // Quick Chips Click Events
+      document.querySelectorAll('.parent-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const name = chip.getAttribute('data-name');
+          if (parentInput) {
+            parentInput.value = (name === 'ALL' ? '' : name);
+          }
+          searchStudents(name);
         });
       });
 
@@ -994,10 +1169,15 @@
         badge.innerHTML = `선택된 조: <strong class="text-teal-700">${teamId}조 (${booth.dept})</strong>`;
       }
 
+      const pBadge = document.getElementById('parents-active-booth-badge');
+      if (pBadge) {
+        pBadge.innerHTML = `선택된 부스: <strong class="text-rose-600 font-bold">${teamId}조 (${booth.dept})</strong>`;
+      }
+
       const markerPos = getConsultingMarkerPosition(teamId);
 
-      // Update both map SVGs
-      ['interactive-map-container', 'full-interactive-map-container'].forEach(containerId => {
+      // Update map SVGs
+      ['interactive-map-container', 'full-interactive-map-container', 'parents-interactive-map-container'].forEach(containerId => {
         const container = document.getElementById(containerId);
         if (!container) return;
 
@@ -1021,6 +1201,9 @@
 
       // Update Selected Booth Detail in Full Map Tab
       renderSelectedBoothDetail(teamId);
+
+      // Update Parent Direction Guide if element exists
+      updateParentDirectionGuide(teamId);
     }
 
     // 7. Show Booth Detail in Modal
@@ -1645,6 +1828,356 @@
         selectTeacher(matchedTeachers[0]);
       }
     }
+
+    // 15. Search Students for Parents
+    function searchStudents(query) {
+      const q = (query || '').trim();
+      const summaryText = document.getElementById('parent-summary-text');
+      const countBadge = document.getElementById('parent-count-badge');
+      const indicator = document.getElementById('parent-summary-indicator');
+      const resultsList = document.getElementById('parent-results-list');
+      const clearBtn = document.getElementById('btn-parent-search-clear');
+
+      if (!resultsList) return;
+
+      if (clearBtn) {
+        if (q.length > 0) clearBtn.classList.remove('hidden');
+        else clearBtn.classList.add('hidden');
+      }
+
+      // Empty Query State
+      if (!q) {
+        if (summaryText) summaryText.textContent = '학생 이름을 입력해 주세요 (예: 김범준, 최원우...)';
+        if (indicator) indicator.className = 'w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse';
+        if (countBadge) countBadge.classList.add('hidden');
+
+        // Render Guide & All Teams Overview
+        let welcomeHtml = `
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 text-center space-y-3">
+            <div class="w-12 h-12 mx-auto rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl shadow-xs">
+              🔎
+            </div>
+            <h4 class="text-sm font-bold text-slate-800">학생 이름 검색 안내</h4>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+              상단 검색창에 학생 이름을 입력하시면 해당 학생이 속한 <strong>연구 조, 연구 주제, 지도교사 및 부스 번호</strong>를 즉시 확인할 수 있습니다.
+            </p>
+            <div class="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-left text-xs text-amber-900 space-y-1.5">
+              <div class="font-bold flex items-center gap-1.5 text-amber-950">
+                <span>💡</span> 동명이인 학생 검색 안내
+              </div>
+              <p class="text-[11px] text-amber-800 leading-normal">
+                동명이인이 있는 경우(예: <strong>'김범준'</strong> 학생) 해당되는 모든 조가 카드로 나열됩니다. 주제나 조를 확인하신 후 카드를 클릭하시면 해당 부스 위치로 안내됩니다.
+              </p>
+              <div class="pt-1">
+                <button onclick="document.getElementById('input-parent-search').value='김범준'; searchStudents('김범준');" class="px-2.5 py-1 rounded-md bg-amber-200/80 hover:bg-amber-300 text-amber-900 font-bold text-[11px] transition-colors">
+                  👉 동명이인 '김범준' 검색 예시 바로보기
+                </button>
+              </div>
+            </div>
+            <div class="pt-1">
+              <button onclick="searchStudents('ALL')" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-colors">
+                전체 29개 조 목록 보기
+              </button>
+            </div>
+          </div>
+        `;
+        resultsList.innerHTML = welcomeHtml;
+        return;
+      }
+
+      // Search matching teams
+      let matches = [];
+      const isAll = (q.toUpperCase() === 'ALL');
+
+      for (const [teamIdStr, topic] of Object.entries(currentData.topics)) {
+        const teamId = parseInt(teamIdStr);
+        if (isAll) {
+          matches.push({ teamId, topic, matchedStudents: topic.students });
+        } else {
+          const matchedStudents = (topic.students || []).filter(s => s && s.toLowerCase().includes(q.toLowerCase()));
+          const matchAdvisor = (topic.advisor || '').toLowerCase().includes(q.toLowerCase());
+          const matchTitle = (topic.title || '').toLowerCase().includes(q.toLowerCase());
+          const matchTeam = (teamIdStr === q || `${teamIdStr}조` === q);
+
+          if (matchedStudents.length > 0 || matchAdvisor || matchTitle || matchTeam) {
+            matches.push({
+              teamId,
+              topic,
+              matchedStudents: matchedStudents.length > 0 ? matchedStudents : topic.students
+            });
+          }
+        }
+      }
+
+      // Sort by teamId ascending
+      matches.sort((a, b) => a.teamId - b.teamId);
+
+      // Handle Zero Matches
+      if (matches.length === 0) {
+        if (summaryText) summaryText.innerHTML = `검색 결과: <strong>'${q}'</strong> 학생을 찾을 수 없습니다.`;
+        if (indicator) indicator.className = 'w-2.5 h-2.5 rounded-full bg-rose-500';
+        if (countBadge) {
+          countBadge.textContent = '0건';
+          countBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200';
+          countBadge.classList.remove('hidden');
+        }
+
+        resultsList.innerHTML = `
+          <div class="bg-white rounded-2xl p-6 border border-slate-200 text-center space-y-3">
+            <div class="w-12 h-12 mx-auto rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl">
+              ❌
+            </div>
+            <h4 class="text-sm font-bold text-slate-800">'${q}' 학생 검색 결과 없음</h4>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+              입력하신 이름의 학생이 명단에 없습니다. 학생 이름의 철자를 다시 확인해 주세요.
+            </p>
+            <div class="flex justify-center gap-2 pt-2">
+              <button onclick="document.getElementById('input-parent-search').value=''; searchStudents('');" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold">
+                검색창 비우기
+              </button>
+              <button onclick="searchStudents('ALL')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold">
+                전체 학생 보기
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // Check if duplicate student name
+      const isDuplicate = !isAll && matches.length > 1;
+
+      // Update Summary Bar
+      if (isAll) {
+        if (summaryText) summaryText.innerHTML = `전체 연구팀 목록: <strong>총 ${matches.length}개 조</strong>`;
+        if (indicator) indicator.className = 'w-2.5 h-2.5 rounded-full bg-indigo-500';
+        if (countBadge) {
+          countBadge.textContent = `${matches.length}개 조`;
+          countBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800 border border-indigo-200';
+          countBadge.classList.remove('hidden');
+        }
+      } else if (isDuplicate) {
+        if (summaryText) summaryText.innerHTML = `📢 <strong>'${q}'</strong> 학생으로 <strong>${matches.length}개 연구팀</strong>이 검색되었습니다! <span class="text-rose-600 font-bold">(동명이인)</span>`;
+        if (indicator) indicator.className = 'w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse';
+        if (countBadge) {
+          countBadge.textContent = `동명이인 ${matches.length}명`;
+          countBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300 animate-pulse';
+          countBadge.classList.remove('hidden');
+        }
+      } else {
+        if (summaryText) summaryText.innerHTML = `✅ <strong>'${q}'</strong> 학생의 발표 부스입니다. (<strong>${matches[0].teamId}조</strong>)`;
+        if (indicator) indicator.className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+        if (countBadge) {
+          countBadge.textContent = '1건 검색';
+          countBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200';
+          countBadge.classList.remove('hidden');
+        }
+      }
+
+      // Duplicate Notice Banner if multiple
+      let cardsHtml = '';
+      if (isDuplicate) {
+        cardsHtml += `
+          <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 text-xs text-amber-900 flex items-start gap-3 shadow-sm">
+            <span class="text-xl">⚠️</span>
+            <div>
+              <strong class="font-bold text-amber-950 text-sm">동명이인(${matches.length}명) 안내</strong>
+              <p class="mt-1 leading-relaxed text-amber-800">
+                현재 <strong>'${q}'</strong> 이름의 학생이 서로 다른 <strong>${matches.length}개 조</strong>에 소속되어 있습니다.
+                아래 카드에서 <strong>연구 주제, 지도교사, 함께 참여하는 학생</strong>을 확인하신 후 원하시는 카드를 클릭하시면 해당 부스 위치로 도면이 안내됩니다.
+              </p>
+            </div>
+          </div>
+        `;
+      }
+
+      // Render Cards
+      matches.forEach((m) => {
+        const teamId = m.teamId;
+        const topic = m.topic;
+        const deptStyle = DEPT_STYLES[topic.dept] || DEPT_STYLES['기타'];
+
+        // Student pills
+        const studentPills = (topic.students || []).map(s => {
+          const isMatched = !isAll && s.toLowerCase().includes(q.toLowerCase());
+          if (isMatched) {
+            return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-400 text-slate-900 font-extrabold text-xs shadow-xs ring-2 ring-amber-300">★ ${s}</span>`;
+          }
+          return `<span class="inline-flex items-center px-2 py-0.5 rounded-lg bg-slate-100 text-slate-700 text-xs">${s}</span>`;
+        }).join(' ');
+
+        // Physical Location Text
+        let locationName = '';
+        if (topic.dept === '수학') locationName = `체육관 우측 ㄷ자 ${teamId}번 부스`;
+        else if (topic.dept === '물리') locationName = `체육관 우측 출입구 부근 ${teamId}번 부스`;
+        else if (topic.dept === '화학') locationName = `체육관 좌측 ㄷ자 ${teamId}번 부스`;
+        else if (topic.dept === '생명과학' || topic.dept === '생명') locationName = `체육관 중앙 무대 앞 ${teamId}번 부스`;
+        else if (topic.dept === '융합') locationName = `체육관 중앙 ${teamId}번 부스`;
+        else locationName = `체육관 내 ${teamId}번 부스`;
+
+        cardsHtml += `
+          <div class="parent-team-card bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200 hover:border-amber-400 hover:shadow-md transition-all cursor-pointer relative group" data-team="${teamId}" id="parent-card-${teamId}">
+            <!-- Card Header -->
+            <div class="flex items-center justify-between gap-2 mb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-slate-900 text-white font-black text-sm flex items-center justify-center shadow-xs">
+                  ${teamId}
+                </span>
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-bold text-sm text-slate-900">${teamId}조</span>
+                    <span class="px-2 py-0.5 rounded-md text-[11px] font-bold ${deptStyle.badge} border">${topic.dept}</span>
+                  </div>
+                </div>
+              </div>
+              <span class="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg flex items-center gap-1">
+                📍 ${locationName}
+              </span>
+            </div>
+
+            <!-- Topic Title -->
+            <h4 class="text-sm sm:text-base font-bold text-slate-900 leading-snug mb-3 group-hover:text-amber-600 transition-colors">
+              ${topic.title}
+            </h4>
+
+            <!-- Advisor & Students -->
+            <div class="space-y-2 pt-2 border-t border-slate-100 text-xs">
+              <div class="flex items-center gap-2 text-slate-600">
+                <span class="font-semibold text-slate-400 w-14 shrink-0">지도교사</span>
+                <strong class="text-slate-800">${topic.advisor || '-'} 선생님</strong>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="font-semibold text-slate-400 w-14 shrink-0 pt-0.5">발표 학생</span>
+                <div class="flex flex-wrap gap-1.5">
+                  ${studentPills}
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Actions -->
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <span class="text-[11px] font-medium text-slate-400 flex items-center gap-1">
+                <span>👉</span> 클릭하여 도면에서 위치 확인
+              </span>
+              <div class="flex items-center gap-1.5">
+                <button type="button" onclick="event.stopPropagation(); copyStudentDirectLink('${encodeURIComponent(q || '')}', ${teamId});" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-colors flex items-center gap-1" title="학부모 공유 링크 복사">
+                  <span>🔗 링크 복사</span>
+                </button>
+                <button type="button" class="px-3 py-1.5 rounded-xl bg-slate-900 group-hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-1">
+                  <span>📍 부스 위치 보기</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      resultsList.innerHTML = cardsHtml;
+
+      // Attach Click Handlers to Cards
+      resultsList.querySelectorAll('.parent-team-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const teamId = parseInt(card.getAttribute('data-team'));
+          selectParentTeam(teamId);
+        });
+      });
+
+      // If single match or first duplicate, automatically highlight first one
+      if (matches.length > 0) {
+        selectParentTeam(matches[0].teamId, false); // don't scroll if auto
+      }
+    }
+
+    // 16. Select Parent Team from Card
+    function selectParentTeam(teamId, shouldScroll = true) {
+      // Highlight active card
+      document.querySelectorAll('.parent-team-card').forEach(c => {
+        const cTeam = parseInt(c.getAttribute('data-team'));
+        if (cTeam === teamId) {
+          c.classList.add('border-amber-500', 'ring-2', 'ring-amber-200', 'bg-amber-50/20');
+          c.classList.remove('border-slate-200');
+        } else {
+          c.classList.remove('border-amber-500', 'ring-2', 'ring-amber-200', 'bg-amber-50/20');
+          c.classList.add('border-slate-200');
+        }
+      });
+
+      // Highlight Booth on interactive maps
+      highlightBooth(teamId);
+
+      // Scroll to map on mobile screens
+      if (shouldScroll && window.innerWidth < 1024) {
+        const mapEl = document.getElementById('parents-interactive-map-container');
+        if (mapEl) {
+          mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    }
+
+    // 17. Update Parent Direction Guide
+    function updateParentDirectionGuide(teamId) {
+      const dirText = document.getElementById('parents-direction-text');
+      if (!dirText) return;
+      const topic = currentData.topics[teamId] || {};
+      let guide = '';
+      if (topic.dept === '수학') {
+        guide = `강당 출입구(우측 하단)로 들어오신 후 <strong>오른쪽 벽면</strong>을 따라 안쪽으로 이동하시면 <strong>수학 ${teamId}번 부스</strong>가 위치해 있습니다.`;
+      } else if (topic.dept === '물리') {
+        guide = `강당 출입구(우측 하단)로 들어오신 직후 <strong>바로 오른쪽 앞쪽 구역</strong>에 <strong>물리 ${teamId}번 부스</strong>가 위치해 있습니다.`;
+      } else if (topic.dept === '화학') {
+        guide = `강당 출입구에서 <strong>왼쪽 벽면 방향</strong>으로 가로질러 이동하시면 <strong>화학 ${teamId}번 부스</strong>가 위치해 있습니다.`;
+      } else if (topic.dept === '생명과학' || topic.dept === '생명') {
+        guide = `강당 중앙 통로를 따라 <strong>무대 정면 바로 앞쪽</strong>으로 이동하시면 <strong>생명과학 ${teamId}번 부스</strong>가 위치해 있습니다.`;
+      } else if (topic.dept === '융합') {
+        guide = `강당 출입구에서 중앙 통로로 걸어오시면 <strong>중앙 첫 번째 부스 열</strong>에 <strong>융합 ${teamId}번 부스</strong>가 위치해 있습니다.`;
+      } else {
+        guide = `도면에서 붉은색 핀이 깜빡이는 <strong>${teamId}번 부스</strong>로 이동해 주세요.`;
+      }
+      dirText.innerHTML = guide;
+    }
+
+    // 18. Copy Direct Link for Student
+    function copyStudentDirectLink(encodedName, teamId) {
+      const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '') + 'parents.html';
+      const name = decodeURIComponent(encodedName || '');
+      const shareUrl = name ? `${baseUrl}?name=${encodeURIComponent(name)}` : `${baseUrl}?team=${teamId}`;
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        alert(`학부모님 공유용 링크가 복사되었습니다!\n\n${shareUrl}\n\n카카오톡이나 문자로 전송하시면 바로 이 학생의 부스 위치가 열립니다.`);
+      }).catch(() => {
+        prompt('아래 링크를 복사하여 전달해 주세요:', shareUrl);
+      });
+    }
+
+    // 19. Initial Route Handler for Hash / URL Parameters
+    function handleInitialRoute() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const hash = window.location.hash;
+      const tabParam = urlParams.get('tab');
+      const studentParam = urlParams.get('name') || urlParams.get('search') || urlParams.get('student');
+      const teamParam = urlParams.get('team');
+
+      if (hash === '#parents' || tabParam === 'parents' || studentParam || teamParam) {
+        switchTab('parents-view');
+        if (studentParam) {
+          const input = document.getElementById('input-parent-search');
+          if (input) {
+            input.value = studentParam;
+            searchStudents(studentParam);
+          }
+        } else if (teamParam) {
+          const teamId = parseInt(teamParam);
+          if (teamId && currentData.topics[teamId]) {
+            selectParentTeam(teamId);
+          }
+        }
+      }
+    }
+
+    window.addEventListener('hashchange', () => {
+      if (window.location.hash === '#parents') {
+        switchTab('parents-view');
+      }
+    });
   </script>
 </body>
 </html>
