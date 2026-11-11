@@ -2114,18 +2114,6 @@
       }
     }
 
-      // Highlight Booth on interactive maps
-      highlightBooth(teamId);
-
-      // Scroll to map on mobile screens
-      if (shouldScroll && window.innerWidth < 1024) {
-        const mapEl = document.getElementById('parents-interactive-map-container');
-        if (mapEl) {
-          mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }
-    }
-
     // 17. Update Parent Direction Guide
     function updateParentDirectionGuide(teamId) {
       const dirText = document.getElementById('parents-direction-text');
@@ -2143,7 +2131,7 @@
       } else if (topic.dept === '융합') {
         guide = `강당 출입구에서 중앙 통로로 걸어오시면 <strong>중앙 첫 번째 부스 열</strong>에 <strong>융합 ${teamId}번 부스</strong>가 위치해 있습니다.`;
       } else {
-        guide = `도면에서 붉은색 핀이 깜빡이는 <strong>${teamId}번 부스</strong>로 이동해 주세요.`;
+        guide = `도면에서 파란색 핀이 깜빡이는 <strong>${teamId}번 부스</strong>로 이동해 주세요.`;
       }
       dirText.innerHTML = guide;
     }
