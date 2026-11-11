@@ -1308,7 +1308,7 @@ const INITIAL_DATA = {
     "9": {
       "dept": "수학",
       "gridArea": "math",
-      "x": 480,
+      "x": 460,
       "y": 290,
       "w": 70,
       "h": 45,
@@ -1318,7 +1318,7 @@ const INITIAL_DATA = {
     "8": {
       "dept": "수학",
       "gridArea": "math",
-      "x": 550,
+      "x": 530,
       "y": 290,
       "w": 70,
       "h": 45,
@@ -1328,7 +1328,7 @@ const INITIAL_DATA = {
     "7": {
       "dept": "수학",
       "gridArea": "math",
-      "x": 620,
+      "x": 600,
       "y": 290,
       "w": 70,
       "h": 45,
@@ -1338,7 +1338,7 @@ const INITIAL_DATA = {
     "6": {
       "dept": "수학",
       "gridArea": "math",
-      "x": 620,
+      "x": 670,
       "y": 335,
       "w": 70,
       "h": 45,
@@ -1348,7 +1348,7 @@ const INITIAL_DATA = {
     "5": {
       "dept": "수학",
       "gridArea": "math",
-      "x": 620,
+      "x": 670,
       "y": 380,
       "w": 70,
       "h": 45,
@@ -1358,7 +1358,7 @@ const INITIAL_DATA = {
     "4": {
       "dept": "수학",
       "gridArea": "math",
-      "x": 620,
+      "x": 670,
       "y": 425,
       "w": 70,
       "h": 45,
@@ -1368,7 +1368,7 @@ const INITIAL_DATA = {
     "1": {
       "dept": "수학",
       "gridArea": "math",
-      "x": 480,
+      "x": 460,
       "y": 470,
       "w": 70,
       "h": 45,
@@ -1378,7 +1378,7 @@ const INITIAL_DATA = {
     "2": {
       "dept": "수학",
       "gridArea": "math",
-      "x": 550,
+      "x": 530,
       "y": 470,
       "w": 70,
       "h": 45,
@@ -1388,7 +1388,7 @@ const INITIAL_DATA = {
     "3": {
       "dept": "수학",
       "gridArea": "math",
-      "x": 620,
+      "x": 600,
       "y": 470,
       "w": 70,
       "h": 45,
